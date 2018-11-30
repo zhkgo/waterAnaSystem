@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import pymysql
-def load_tot_table():
+def loadTotTable():
     db=pymysql.connect(host='localhost',user='root',password='19971206zhk.',port=3306,charset='utf8')
     cursor=db.cursor()
     cursor.execute('use news')
@@ -8,7 +8,7 @@ def load_tot_table():
     contents=cursor.fetchall()
     db.close()
     return contents
-def load_titles():
+def loadTitles():
     db=pymysql.connect(host='localhost',user='root',password='19971206zhk.',port=3306,charset='utf8')
     cursor=db.cursor()
     cursor.execute('use news')
@@ -17,7 +17,7 @@ def load_titles():
     db.close()
     return titles
 
-def load_content():
+def loadContent():
     db=pymysql.connect(host='localhost',user='root',password='19971206zhk.',port=3306,charset='utf8')
     cursor=db.cursor()
     cursor.execute('use news')
