@@ -169,6 +169,28 @@ def getKeysData(keys):
 
 def getHotWordsData():
     return getKeysData(getHotWords())
+def getM(date):
+    return str(date.year)+"%02d"%(date.month)
+def isMatch(city,key,content):
+    a=len(re.findall(city,content))
+    b=len(re.findall(key,content))
+    ans=0
+    if a!=0 and b!=0:
+        ans=max(a,b)
+    return ans
+def getKeysInCity(keys,city,dateStart,dateEnd):
+    df=getDataByDate()
+    df=df[(df.index<=dateEnd)&(df.index >=dateStart)]
+    tot=len(df)
+    Dict={key:{} for key in keys}
+    for i in range(tot):
+        m=getM(df.iloc[i].name)
+        for key in keys:
+            value=isMatch(city,key,df.iloc[i]['content'])
+            Dict[key][m]=Dict[key].get(m,0)+value
+    ans=pd.DataFrame(Dict)
+    ans.index=pd.date_range(dateStart,dateEnd,freq='M')[:len(ans)]
+    return ans
 
 def getHotHumanData():
     return getKeysData(getHuman())

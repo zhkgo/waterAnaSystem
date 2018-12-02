@@ -115,3 +115,12 @@ def showHotHuman1():
     plt.ylabel('热力值')
     #plt.savefig('human.jpg')
     plt.show()
+def showHotValue(city,dateStart,dateEnd):
+    keys=getHotWords()[:7]
+    data=getKeysInCity(keys,city,dateStart,dateEnd)
+    #print(data.head())
+    data.plot(title=city+'各时间段热点词指数')
+    plt.xlabel('时间')
+    plt.ylabel('热力值')
+def test():
+    showHotValue('绍兴','2017','2018')
