@@ -6,18 +6,19 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import seaborn as sns
 
-mpl.rcParams['figure.dpi']= 128
+mpl.rcParams['figure.dpi']= 512
 sns.set(style="dark",color_codes=True)
 plt.style.use('seaborn-whitegrid')
 plt.rc('axes', unicode_minus=False)  
 mpl.rcParams['font.sans-serif'] = 'FZSongKeBenXiuKaiT-R-GB'
-stopwords=['水利','水利局' ,'水利工程','工程','建设','本站','发布','时间','负责人','一步','标准','重视']
+stopwords=['水利','水利局' ,'水利工程','工程','建设','本站','发布','时间','负责人','一步','标准','重视','责编','同时','街道','目前','会上','下一步','近日','近年来','据悉','据了解','此外','日前','他强调','按照','其中']
 fontPath="fonts/fangzheng.ttf"
 
-def showCloud(words):
-    mycloud=WordCloud(font_path=fontPath,width=800,height=400,stopwords=stopwords).generate(words)
+def showCloud(words,title):
+    mycloud=WordCloud(font_path=fontPath,width=6400,height=3200,stopwords=stopwords).generate(words)
     plt.imshow(mycloud)
     plt.axis("off")
+    mycloud.to_file(title)
     plt.show()
     return mycloud
 
@@ -26,11 +27,11 @@ def showTitleWordCloud():
     text=" ".join(list(df['title']))
     wordlist=jieba.cut(text,cut_all=True)
     wl_space_split=" ".join(wordlist)
-    showCloud(wl_space_split)
+    showCloud(wl_space_split,"titleCloud.png")
 
 def showContentWordCloud():
     contents=getAllContents()
-    showCloud(contents)
+    showCloud(contents,"contentsCloud.png")
 def showBar(labels,values,top=10):
     plt.bar(range(top),values[-top:],fc='b',tick_label=labels[-top:])
 
@@ -88,7 +89,7 @@ def showHotRankOfCity():
 def showNumbersOfCity():
     snsData=getRankData()
     sns.boxplot(snsData.city,snsData.value)
-    plt.title('浙江各大城市热点指数排名')
+    plt.title('浙江各大城市热点指数')
     plt.show()
 
 def showEmotionByQ():

@@ -30,6 +30,23 @@ def getPositionDF():
     cities['qu']=[item[:-1] for item in cities['qu']]
     cities['city']=[item[:-1] for item in cities['city']]
     return cities
+def getAreaInfo():
+    areas=pd.read_excel('keywords/areaInfo.xlsx',skiprows=3)
+    areas=areas[['qu',' ar']]
+    areas['qu']=[item[:-1] for item in areas['qu']]
+    return areas
+def getMerge():
+    contents=getAllContents()
+    cities=getPositionDF()
+    areas=getAreaInfo()
+    cities=cities[['qu','lon','lat']]
+    result=myCal(contents,cities['qu'])
+    dictr={'qu':result[0],'values':result[1]}
+    df=pd.DataFrame(dictr)
+    tot=pd.merge(cities,df,how='inner',on='qu')
+    tot=pd.merge(tot,areas,how='inner',on='qu')
+    return tot
+
 def getMapOfCity():
     cities=getPositionDF()
     mp={key:value for key,value in zip(cities['qu'],cities['city'])}
@@ -134,7 +151,9 @@ def trans(ls):
             i+=1
     return i/len(ls)*100
 
-def getEmotionDictM():
+def getEmotionDictM(reLoad=False):
+    if not reLoad:
+        return pd.read_csv('chache/emotion.csv')
     quaterly,titlesByQ=getQuaterlyData(False)
     #print(len(quaterly),len(titlesByQ))
     result=getEmotionTot(titlesByQ)
@@ -142,7 +161,6 @@ def getEmotionDictM():
     dictM=pd.DataFrame({'季度':quaterly,'情感指数':k})
     dictM=dictM.set_index('季度')
     return dictM
-
 def is_ok(s):
     return s not in stopwords
 def get_most(content):
@@ -196,3 +214,15 @@ def getHotHumanData():
     return getKeysData(getHuman())
 def getHotHumanData1():
     return getKeysData(getHuman1())
+def transtoK(ls):
+    #ans=[]
+    ans=[ls[0],ls[len(ls)-1],min(ls),max(ls)]
+    return ans
+
+def getEchartsK():
+    snsData=getRankData()
+    arr=snsData.groupby('city')
+    ans={}
+    for e in arr:
+        ans[e[0]]=transtoK(list(e[1].sort_values('q')['rankt']))
+    return ans

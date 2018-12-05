@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import pymysql
+import pandas as pd
 def loadTotTable():
     db=pymysql.connect(host='localhost',user='root',password='19971206zhk.',port=3306,charset='utf8')
     cursor=db.cursor()
