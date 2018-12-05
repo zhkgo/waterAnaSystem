@@ -9,52 +9,46 @@ from pyecharts import Geo
 
 
 def showCountry():
-    content=getAllContents()
-    religions=getReligions()
-    keys=list(religions['下辖'])
-    labels,values=myCal(content,keys)
+    labels,values=getCountryData()
     bar = Bar("提及次数前十")
     #其他主题：vintage,macarons,infographic,shine，roma 
-    bar.use_theme("shine")
+  #  bar.use_theme("shine")
     bar.add("",labels[-10:],values[-10:],is_stack=True)
     bar.xaxis_name='县级市'
     bar.yaxis_name='提及次数'
     #bar.render()
     return bar
 def showHotMap():
-    df=getMerge()
-    geo_cities_coords={df.iloc[i]['qu']:(df.iloc[i]['lon'],df.iloc[i]['lat'])
-                    for i in range(len(df))}   
-    attr=list(df['qu'])
-    # [df.iloc[i][' ar']/500 for i in range(len(df))]
-    value=list(df['values'])
-    print(type(value[0]))
-    print(type(attr[0]))
+    attr,value,geo_cities_coords=getHotMapData()
     style = Style(title_color= "#fff",title_pos = "center",width =800,height = 600,background_color = "#132F3D")
     geo = Geo('浙江水利厅发文热力图',**style.init_style)
     geo.add("",attr,value,visual_range=[0,8000],symbol_size=15,
         visual_text_color= "#fff",is_piecewise = True,
         is_visualmap= True,maptype = '浙江',
         geo_cities_coords=geo_cities_coords)
+    #geo.add("", attr, value, type="effectScatter", is_random=True, maptype = '浙江',effect_scale=4,geo_cities_coords=geo_cities_coords)
+    #geo.render('浙江水利厅发文热力图.html')
+    return geo
+def showHotMap2():
+    attr,value,geo_cities_coords=getHotMapData2()
+    style = Style(title_color= "#fff",title_pos = "center",width =800,height = 600,background_color = "#132F3D")
+    geo = Geo('相关新闻最具影响力的县级市',**style.init_style)
+    geo.add("", attr, value, type="effectScatter", is_random=True, maptype = '浙江',effect_scale=4,geo_cities_coords=geo_cities_coords)
     #geo.render('浙江水利厅发文热力图.html')
     return geo
 
 def showCitys():
-    content=getAllContents()
-    religions=getReligions()
-    keys=list(set(religions['行政']))
-    labels,values=myCal(content,keys)
+    labels,values=getCitysData()
     bar = Bar("提及次数前十")
     #其他主题：vintage,macarons,infographic,shine，roma 
-    bar.use_theme("infographic")
+   # bar.use_theme("infographic")
     bar.add("",labels[-10:],values[-10:],is_stack=True)
     bar.xaxis_name='地级市'
     bar.yaxis_name='提及次数'
-    bar.render()
+    #bar.render()
     return bar
 
-def showHotPie():
-    keys=getHotWords()
+def showHotPie(keys=getHotWords()):
     content=getAllContents()
     labels,values=myCal(content,keys)
     pie = Pie("水利热点比例图", title_pos='center')
@@ -69,7 +63,7 @@ def showHotPie():
     legend_orient="vertical",
     legend_pos="left",
 	)
-    pie.render()
+   # pie.render()
     return pie
 def showNewsYear():
     l=2010
@@ -81,7 +75,7 @@ def showNewsYear():
     line = Line("水利厅历年发文量")
     #line.add("", attr, v1, mark_point=["average"])
     line.add("", names, y,is_fill=True,area_color="#000", mark_point=["max", "min"], mark_line=["max", "average"])
-    line.render()
+  #  line.render()
     return line
 def showHotRankOfCity():
     ans=getEchartsK()
@@ -94,12 +88,13 @@ def showHotRankOfCity():
             is_datazoom_show=True,
             #datazoom_orient="vertical",
             )
-    kline.render()
+ #   kline.render()
+    return kline
 def showEmotionByQ():
     dictM=getEmotionDictM()
     bar=Bar("各个季度情感指数")
-    bar.add("",list(dictM['季度']),list(dictM['情感指数']))
-    bar.render()
+    bar.add("",list(dictM['季度']),list(dictM['情感指数']), is_convert=True)
+    #bar.render()
     return bar
 def showHotWords():
     hotWords=getHotWordsData()
@@ -107,7 +102,7 @@ def showHotWords():
     dates=[item.strftime("%Y%m") for item in hotWords.index]
     for item in hotWords:
         line.add(item,dates,list(hotWords[item]))
-    line.render()
+   # line.render()
     return line
 
 def showHotHuman():
@@ -116,7 +111,7 @@ def showHotHuman():
     dates=[item.strftime("%Y%m") for item in hotWords.index]
     for item in hotWords:
         line.add(item,dates,list(hotWords[item]))
-    line.render()
+    #line.render()
     return line
 def showHotHuman1():
     hotWords=getHotHumanData1()
@@ -124,7 +119,7 @@ def showHotHuman1():
     dates=[item.strftime("%Y%m") for item in hotWords.index]
     for item in hotWords:
         line.add(item,dates,list(hotWords[item]))
-    line.render()
+   # line.render()
     return line
 def showHotValue(city,keys,dateStart,dateEnd):
     hotWords=getKeysInCity(keys,city,dateStart,dateEnd)
@@ -132,7 +127,7 @@ def showHotValue(city,keys,dateStart,dateEnd):
     dates=[item.strftime("%Y%m") for item in hotWords.index]
     for item in hotWords:
         line.add(item,dates,list(hotWords[item]))
-    line.render()
+    #line.render()
     return line
 def test():
     showHotValue('绍兴',getHotWords()[:6],'2017','2018')

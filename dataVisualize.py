@@ -85,6 +85,7 @@ def showHotRankOfCity():
     snsData=getRankData()
     sns.boxplot(snsData.city,snsData.rankt)
     plt.title('浙江各大城市热点指数排名')
+    #plt.savefig('snspic.png')
     plt.show()
 def showNumbersOfCity():
     snsData=getRankData()

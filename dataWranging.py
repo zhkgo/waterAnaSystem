@@ -5,6 +5,7 @@ from nameList import *
 import re
 from snownlp import SnowNLP
 import jieba
+import pickle
 #sql data to pandas DataFrame
 stopwords=['',' ','的','工作','建设','\n','了','工程','水利','水利局' ,'水利工程','工程','本站','发布','时间','负责人','一步','标准','重视']
 
@@ -153,7 +154,7 @@ def trans(ls):
 
 def getEmotionDictM(reLoad=False):
     if not reLoad:
-        return pd.read_csv('chache/emotion.csv')
+        return pd.read_csv('cache/emotion.csv')
     quaterly,titlesByQ=getQuaterlyData(False)
     #print(len(quaterly),len(titlesByQ))
     result=getEmotionTot(titlesByQ)
@@ -226,3 +227,44 @@ def getEchartsK():
     for e in arr:
         ans[e[0]]=transtoK(list(e[1].sort_values('q')['rankt']))
     return ans
+
+def getCountryData(reLoad=False):
+    if not reLoad:
+        return pickle.load(open('cache/getCountryData.pkl','rb'))
+    content=getAllContents()
+    religions=getReligions()
+    keys=list(religions['下辖'])
+    labels,values=myCal(content,keys)
+    pickle.dump((labels,values),open('cache/getCountryData.pkl','wb'))
+    return labels,values
+def getCitysData(reLoad=False):
+    if not reLoad:
+        return pickle.load(open('cache/getCitysData.pkl','rb'))
+    content=getAllContents()
+    religions=getReligions()
+    keys=list(set(religions['行政']))
+    labels,values=myCal(content,keys)
+    pickle.dump((labels,values),open('cache/getCitysData.pkl','wb'))
+    return labels,values
+def getHotMapData(reLoad=False):
+    if not reLoad:
+        return pickle.load(open('cache/getHotMapData.pkl','rb'))
+    df=getMerge()
+    geo_cities_coords={df.iloc[i]['qu']:(df.iloc[i]['lon'],df.iloc[i]['lat']) for i in range(len(df))}   
+    attr=list(df['qu'])
+    # [df.iloc[i][' ar']/500 for i in range(len(df))]
+    values=list(df['values'])
+    pickle.dump((attr,values,geo_cities_coords),open('cache/getHotMapData.pkl','wb'))
+    return attr,values,geo_cities_coords
+def getHotMapData2(reLoad=False):
+    if not reLoad:
+        return pickle.load(open('cache/getHotMapData2.pkl','rb'))
+    df=getMerge()
+    geo_cities_coords={df.iloc[i]['qu']:(df.iloc[i]['lon'],df.iloc[i]['lat'])
+                    for i in range(len(df))}   
+    attr=['兰溪','海宁','萧山','苍南','临安','诸暨','嘉善','海盐','瑞安','开化']
+    # [df.iloc[i][' ar']/500 for i in range(len(df))]
+    values=[i for i in range(1,len(attr)+1)]
+    #print(type(value[0]))
+    pickle.dump((attr,values,geo_cities_coords),open('cache/getHotMapData2.pkl','wb'))
+    return attr,values,geo_cities_coords
