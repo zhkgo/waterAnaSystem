@@ -120,9 +120,19 @@ def showHotHuman():
     return line
 def showHotHuman1():
     hotWords=getHotHumanData1()
-    line=Line("历年水利人物图壹")
+    line=Line("历年水利人物图贰")
     dates=[item.strftime("%Y%m") for item in hotWords.index]
     for item in hotWords:
         line.add(item,dates,list(hotWords[item]))
     line.render()
     return line
+def showHotValue(city,keys,dateStart,dateEnd):
+    hotWords=getKeysInCity(keys,city,dateStart,dateEnd)
+    line=Line(city+"相关折线图")
+    dates=[item.strftime("%Y%m") for item in hotWords.index]
+    for item in hotWords:
+        line.add(item,dates,list(hotWords[item]))
+    line.render()
+    return line
+def test():
+    showHotValue('绍兴',getHotWords()[:6],'2017','2018')
